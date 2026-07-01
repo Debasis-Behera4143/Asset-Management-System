@@ -168,14 +168,14 @@ export default function AllocationPage() {
 
   // Fetch Employees for assignment selection
   const { data: employeesData } = useQuery({
-    queryKey: ['employees-simple'],
+    queryKey: ['employees', 'simple'],
     queryFn: () => employeeApi.getAll({ size: 300 }).then(r => r.data.data?.content || []),
     enabled: showModal,
   })
 
   // Fetch Assets for assignment selection
   const { data: assetsData } = useQuery({
-    queryKey: ['assets-simple'],
+    queryKey: ['assets', 'simple'],
     queryFn: () => assetApi.getAll({ size: 500 }).then(r => r.data.data?.content || []),
     enabled: showModal,
   })

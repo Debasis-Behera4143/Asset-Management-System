@@ -71,11 +71,7 @@ export default function LoginPage() {
     onSuccess: (res) => {
       const data = res.data?.data || res.data
       setAuth(data)
-      if (data.loginCount === 1) {
-        success(`Welcome, ${data.firstName}!`)
-      } else {
-        success(`Welcome Back, ${data.firstName}!`)
-      }
+      success(`Welcome, ${data.firstName}!`)
       navigate('/dashboard')
     },
     onError: (err) => {
@@ -267,7 +263,7 @@ export default function LoginPage() {
 
                 <div className="text-center mb-6">
                   <h2 className={`text-xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                    Welcome Back!
+                    Welcome!
                   </h2>
                   <p className="text-sm font-semibold text-slate-450 mt-1">
                     Sign in to continue to your account

@@ -157,7 +157,7 @@ export default function MaintenancePage() {
   })
 
   const { data: assetsData } = useQuery({
-    queryKey: ['assets-simple'],
+    queryKey: ['assets', 'simple'],
     queryFn: () => assetApi.getAll({ size: 200 }).then(r => r.data.data?.content || []),
   })
 

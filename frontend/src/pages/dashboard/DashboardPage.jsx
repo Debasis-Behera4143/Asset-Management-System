@@ -150,7 +150,7 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <span className="w-1 h-5 rounded-sm" style={{ background: 'var(--railway-crimson)' }} />
             <h1 className="text-base font-bold uppercase tracking-wider text-slate-800 dark:text-white">
-              {user?.loginCount === 1 ? `Welcome, ${user?.firstName}!` : `Welcome Back, ${user?.firstName}!`}
+              Welcome, {user?.firstName}!
             </h1>
           </div>
           <p className="text-xs font-semibold text-slate-550 dark:text-slate-400 pl-3">
