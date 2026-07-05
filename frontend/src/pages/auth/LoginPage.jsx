@@ -355,7 +355,7 @@ export default function LoginPage() {
 
                   {/* Caps Lock warning detector */}
                   {capsLock && (
-                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#d97706] uppercase tracking-wider bg-amber-55 border border-amber-100/40 p-2.5 rounded-lg">
+                    <div className="flex items-center gap-1.5 text-[11px] font-bold text-[#d97706] uppercase tracking-wider bg-amber-500/10 border border-amber-100/40 p-2.5 rounded-lg">
                       <AlertCircle size={12} />
                       <span>Caps Lock is ON</span>
                     </div>

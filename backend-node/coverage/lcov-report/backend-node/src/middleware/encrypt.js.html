@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for backend-node/src/services/auditLogService.js</title>
+    <title>Code coverage report for backend-node/src/middleware/encrypt.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../../prettify.css" />
     <link rel="stylesheet" href="../../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../../index.html">All files</a> / <a href="index.html">backend-node/src/services</a> auditLogService.js</h1>
+        <h1><a href="../../../index.html">All files</a> / <a href="index.html">backend-node/src/middleware</a> encrypt.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">38.46% </span>
+                <span class="strong">92% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/13</span>
+                <span class='fraction'>23/25</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">42.1% </span>
+                <span class="strong">87.5% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>8/19</span>
+                <span class='fraction'>7/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/2</span>
+                <span class='fraction'>5/5</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">45.45% </span>
+                <span class="strong">92% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/11</span>
+                <span class='fraction'>23/25</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -114,7 +114,92 @@
 <a name='L49'></a><a href='#L49'>49</a>
 <a name='L50'></a><a href='#L50'>50</a>
 <a name='L51'></a><a href='#L51'>51</a>
-<a name='L52'></a><a href='#L52'>52</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">2x</span>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -122,100 +207,87 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-yes">5x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { AuditLog } = require('../models');
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { decryptPayload, encryptPayload } = require('../utils/encryptionUtils');
 const logger = require('../utils/logger');
 &nbsp;
 /**
- * Audit Log Service.
- * Records all significant actions (AOP-equivalent via explicit calls).
+ * API-level AES-256-GCM Encryption Middleware
+ *
+ * For endpoints where req.headers['x-encrypted'] === 'true':
+ *  - decryptRequest: decrypts incoming { encrypted: "..." } body
+ *  - encryptResponse: wraps outgoing response in encrypted form
+ *
+ * This enables optional API-level E2EE on top of HTTPS transport security.
+ * Frontend must use the same AES-256-GCM key (shared secret) to encrypt/decrypt.
  */
 &nbsp;
-async function log(action, entityType, entityId, oldValues, newValues, description, userId = null, req = null) {
+/**
+ * Middleware to decrypt encrypted request body.
+ * Only activates when 'x-encrypted: true' header is present.
+ */
+function decryptRequest(req, res, next) {
+  if (req.headers['x-encrypted'] !== 'true') {
+    return next();
+  }
+&nbsp;
   try {
-    await AuditLog.create({
-      action,
-      entityType,
-      entityId,
-      oldValues: oldValues || null,
-      newValues: newValues || null,
-      description,
-      performedById: userId,
-      ipAddress: req ? (<span class="branch-0 cbranch-no" title="branch not covered" >req.ip || req.connection?.remoteAddress)</span> : null,
-      userAgent: req ? <span class="branch-0 cbranch-no" title="branch not covered" >req.headers?.['user-agent'] </span>: null,
-    });
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (req.body &amp;&amp; req.body.encrypted) {
+      req.body = decryptPayload(req.body);
+      logger.debug('Request body decrypted successfully');
+    }
+    next();
   } catch (err) {
-    // Don't let audit logging failures break business logic
-<span class="cstat-no" title="statement not covered" >    logger.error(`Audit log failed: ${err.message}`);</span>
+    logger.warn('Request decryption failed:', err.message);
+    return res.status(400).json({
+      success: false,
+      status: 400,
+      message: 'Invalid encrypted payload — decryption failed',
+    });
   }
 }
 &nbsp;
-async function <span class="fstat-no" title="function not covered" >getAll(</span>{ page = <span class="branch-0 cbranch-no" title="branch not covered" >0,</span> size = <span class="branch-0 cbranch-no" title="branch not covered" >20,</span> entityType, action } = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
-  const where = <span class="cstat-no" title="statement not covered" >{};</span>
-<span class="cstat-no" title="statement not covered" >  if (entityType) <span class="cstat-no" title="statement not covered" >where.entityType = entityType;</span></span>
-<span class="cstat-no" title="statement not covered" >  if (action) <span class="cstat-no" title="statement not covered" >where.action = action;</span></span>
+/**
+ * Middleware factory to encrypt response JSON.
+ * Wraps res.json() to encrypt outgoing data.
+ * Only activates when client sends 'x-encrypted: true' header.
+ */
+function encryptResponse(req, res, next) {
+  if (req.headers['x-encrypted'] !== 'true') {
+    return next();
+  }
 &nbsp;
-  const { count, rows } = <span class="cstat-no" title="statement not covered" >await AuditLog.findAndCountAll({</span>
-    where,
-    limit: size,
-    offset: page * size,
-    order: [['createdAt', 'DESC']],
-    include: [
-      {
-        model: require('../models').User,
-        as: 'performedBy',
-        attributes: ['id', 'firstName', 'lastName', 'email'],
-        required: false,
-      },
-    ],
-  });
+  const originalJson = res.json.bind(res);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >  return { content: rows, total: count, page, size };</span>
+  res.json = function (data) {
+    try {
+      const encrypted = encryptPayload(data);
+      res.setHeader('x-encrypted', 'true');
+      return originalJson(encrypted);
+    } catch (err) {
+<span class="cstat-no" title="statement not covered" >      logger.error('Response encryption failed:', err.message);</span>
+<span class="cstat-no" title="statement not covered" >      return originalJson(data); </span>// Fallback to plaintext
+    }
+  };
+&nbsp;
+  next();
 }
 &nbsp;
-module.exports = { log, getAll };
+/**
+ * Combined middleware: decrypt request + encrypt response.
+ */
+function e2eEncryption(req, res, next) {
+  decryptRequest(req, res, () =&gt; {
+    encryptResponse(req, res, next);
+  });
+}
+&nbsp;
+module.exports = { decryptRequest, encryptResponse, e2eEncryption };
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
