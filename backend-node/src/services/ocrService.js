@@ -106,6 +106,19 @@ async function extractFromPdf(buffer) {
   }
 }
 
+function validatePastDate(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr);
+  if (isNaN(d)) return null;
+  const today = new Date();
+  today.setHours(23, 59, 59, 999);
+  if (d > today) {
+    logger.warn(`OCR parsed future date (${dateStr}) ignored.`);
+    return null;
+  }
+  return dateStr;
+}
+
 // ─── Data Parsing ─────────────────────────────────────────────────────────────
 
 async function parseOcrWithAi(text) {
@@ -164,8 +177,8 @@ JSON Schema:
     return {
       vendorName: data.vendorName || null,
       invoiceNumber: data.invoiceNumber || null,
-      invoiceDate: data.invoiceDate || null,
-      purchaseDate: data.purchaseDate || null,
+      invoiceDate: validatePastDate(data.invoiceDate || null),
+      purchaseDate: validatePastDate(data.purchaseDate || null),
       totalAmount: typeof data.totalAmount === 'number' ? data.totalAmount : null,
       warrantyPeriod: data.warrantyPeriod || null,
       assetName: data.assetName || null,
@@ -193,8 +206,8 @@ function parseInvoiceData(text) {
   const cleaned = cleanOcrText(text);
   const vendorName = extractVendorName(cleaned);
   const invoiceNumber = extractInvoiceNumber(cleaned);
-  const invoiceDate = extractDate(cleaned, 'invoice');
-  const purchaseDate = extractDate(cleaned, 'purchase');
+  const invoiceDate = validatePastDate(extractDate(cleaned, 'invoice'));
+  const purchaseDate = validatePastDate(extractDate(cleaned, 'purchase'));
   const totalAmount = extractAmount(cleaned);
   const warrantyPeriod = extractWarrantyPeriod(cleaned);
   const assetName = extractAssetName(cleaned);
