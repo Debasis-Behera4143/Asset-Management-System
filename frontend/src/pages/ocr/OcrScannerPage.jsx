@@ -145,6 +145,15 @@ export default function OcrScannerPage() {
         <div>
           {result ? (
             <div className="card p-5 space-y-4 animate-scale-in">
+              {result.isDemo && (
+                <div className="p-3.5 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl text-xs flex items-start gap-2.5">
+                  <AlertCircle size={15} className="flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold">Local Backend Offline</p>
+                    <p className="mt-0.5 text-slate-400">Unable to reach the local API server. Showing simulated demo data. Please verify your local backend server is running on port 8080.</p>
+                  </div>
+                </div>
+              )}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <CheckCircle size={18} className="text-emerald-500" />

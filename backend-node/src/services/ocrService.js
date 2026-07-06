@@ -82,6 +82,18 @@ async function extractFromImage(buffer, mimetype) {
 
 async function extractFromPdf(buffer) {
   try {
+    const pdf = require('pdf-parse');
+    const data = await pdf(buffer);
+    if (data && data.text && data.text.trim().length > 10) {
+      logger.info('Digital PDF detected. Extracted text natively via pdf-parse.');
+      return data.text;
+    }
+    logger.info('Digital PDF text extraction was empty. Falling back to Tesseract OCR.');
+  } catch (err) {
+    logger.warn(`pdf-parse failed: ${err.message}. Falling back to Tesseract OCR.`);
+  }
+
+  try {
     const worker = await createWorker('eng', 1, {
       logger: m => logger.debug(`Tesseract: ${m.status}`),
     });
@@ -89,7 +101,7 @@ async function extractFromPdf(buffer) {
     await worker.terminate();
     return text;
   } catch (err) {
-    logger.warn(`PDF OCR failed: ${err.message}. Converting to image not available in this environment.`);
+    logger.warn(`PDF OCR via Tesseract failed: ${err.message}.`);
     return '';
   }
 }
@@ -143,8 +155,11 @@ JSON Schema:
     const response = await provider.generateResponse(systemPrompt, `Raw OCR Text:\n${text}`);
     
     // Parse response
-    const cleanJson = response.replace(/```json|```/g, '').trim();
-    const data = JSON.parse(cleanJson);
+    const jsonMatch = response.match(/\{[\s\S]*\}/);
+    if (!jsonMatch) {
+      throw new Error('No JSON object found in AI response.');
+    }
+    const data = JSON.parse(jsonMatch[0]);
     
     return {
       vendorName: data.vendorName || null,
@@ -162,15 +177,28 @@ JSON Schema:
   }
 }
 
+function cleanOcrText(text) {
+  if (!text) return '';
+  return text
+    .replace(/t0tal/gi, 'total')
+    .replace(/am0unt/gi, 'amount')
+    .replace(/grand\s*t0tal/gi, 'grand total')
+    .replace(/1nvoice/gi, 'invoice')
+    .replace(/inv0ice/gi, 'invoice')
+    .replace(/ser1al/gi, 'serial')
+    .replace(/warranty\s*per1od/gi, 'warranty period');
+}
+
 function parseInvoiceData(text) {
-  const vendorName = extractVendorName(text);
-  const invoiceNumber = extractInvoiceNumber(text);
-  const invoiceDate = extractDate(text, 'invoice');
-  const purchaseDate = extractDate(text, 'purchase');
-  const totalAmount = extractAmount(text);
-  const warrantyPeriod = extractWarrantyPeriod(text);
-  const assetName = extractAssetName(text);
-  const serialNumber = extractSerialNumber(text);
+  const cleaned = cleanOcrText(text);
+  const vendorName = extractVendorName(cleaned);
+  const invoiceNumber = extractInvoiceNumber(cleaned);
+  const invoiceDate = extractDate(cleaned, 'invoice');
+  const purchaseDate = extractDate(cleaned, 'purchase');
+  const totalAmount = extractAmount(cleaned);
+  const warrantyPeriod = extractWarrantyPeriod(cleaned);
+  const assetName = extractAssetName(cleaned);
+  const serialNumber = extractSerialNumber(cleaned);
   const extractionConfidence = calculateConfidence({
     vendorName, invoiceNumber, invoiceDate, totalAmount,
   });
@@ -197,7 +225,7 @@ function extractVendorName(text) {
   
   for (const line of lines) {
     if (ignorePatterns.test(line)) continue;
-    if (/(?:pvt|private|ltd|limited|inc|corp|corporation|co\.|company|solutions|technologies|systems|services|mobility)/i.test(line)) {
+    if (/(?:pvt|private|ltd|limited|inc|corp|corporation|co\.|company|solutions|technologies|systems|services|mobility|enterprises|traders|distributors|retail|stores|wholesale|agency|mart|supermarket|ventures|industries|commerce)/i.test(line)) {
       return line.replace(/^(from|sold\s*by|vendor|supplier|company)[:\s]*/i, '').trim();
     }
   }
@@ -219,8 +247,8 @@ function extractVendorName(text) {
 
 function extractInvoiceNumber(text) {
   const patterns = [
-    /(?:invoice\s*no|invoice\s*number|invoice\s*#|inv\s*no|inv\s*#|bill\s*no|bill\s*number)[:.#\s]+([A-Za-z0-9\-\/]+)/i,
-    /(?:invoice|inv|bill)\s*[:#\s]+([A-Za-z0-9\-\/]+)/i,
+    /(?:invoice\s*no|invoice\s*number|invoice\s*id|invoice\s*#|inv\s*no|inv\s*id|inv\s*#|bill\s*no|bill\s*number|receipt\s*no|receipt\s*#)[:.#\s]+([A-Za-z0-9\-\/]+)/i,
+    /(?:invoice|inv|bill|receipt)\s*[:#\s]+([A-Za-z0-9\-\/]+)/i,
     /([A-Z0-9\-\/]+)\s+(?:date|dated)/i
   ];
   for (const p of patterns) {
@@ -256,6 +284,7 @@ function extractDate(text, type = 'invoice') {
   const genericPatterns = [
     /\b(\d{4})[-/.](\d{2})[-/.](\d{2})\b/,
     /\b(\d{2})[-/.](\d{2})[-/.](\d{4})\b/,
+    /\b(\d{1,2})[-/](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[-/](\d{2,4})\b/i,
     /\b(\d{1,2})\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(\d{4})\b/i,
     /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+(\d{1,2}),?\s+(\d{4})\b/i
   ];
@@ -276,11 +305,26 @@ function parseDateString(raw) {
   
   if (/^\d{4}-\d{2}-\d{2}$/.test(clean)) return clean;
   
-  const slashMatch = clean.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{4})$/);
+  const mmmMatch = clean.match(/^(\d{1,2})[-/](Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[-/](\d{2,4})$/i);
+  if (mmmMatch) {
+    const day = parseInt(mmmMatch[1], 10);
+    const monthStr = mmmMatch[2];
+    let year = parseInt(mmmMatch[3], 10);
+    if (year < 100) year += 2000;
+    const months = { jan:0, feb:1, mar:2, apr:3, may:4, jun:5, jul:6, aug:7, sep:8, oct:9, nov:10, dec:11 };
+    const month = months[monthStr.toLowerCase()];
+    const d = new Date(year, month, day);
+    if (!isNaN(d)) {
+      return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+  }
+
+  const slashMatch = clean.match(/^(\d{1,2})[-/.](\d{1,2})[-/.](\d{2,4})$/);
   if (slashMatch) {
     const part1 = parseInt(slashMatch[1], 10);
     const part2 = parseInt(slashMatch[2], 10);
-    const year = parseInt(slashMatch[3], 10);
+    let year = parseInt(slashMatch[3], 10);
+    if (year < 100) year += 2000;
     
     if (part1 > 12) {
       return `${year}-${String(part2).padStart(2, '0')}-${String(part1).padStart(2, '0')}`;
@@ -330,7 +374,9 @@ function extractAmount(text) {
 function extractWarrantyPeriod(text) {
   const patterns = [
     /(?:warranty|warranty\s*period)[:\s]+(\d+\s*(?:year|month|day|yr|mo)s?)/i,
-    /(\d+\s*(?:year|month|yr|mo)s?\s*warranty)/i
+    /(\d+\s*(?:year|month|yr|mo)s?\s*warranty)/i,
+    /warranty\s+(?:duration|term|length)[:\s]+(\d+\s*(?:year|month|day|yr|mo)s?)/i,
+    /warranty\s*[:\s]*(\d+\s*(?:year|month|day|yr|mo)s?)/i
   ];
   for (const p of patterns) {
     const m = text.match(p);
@@ -370,7 +416,8 @@ function extractAssetName(text) {
 function extractSerialNumber(text) {
   const patterns = [
     /(?:serial\s*no|serial\s*number|serial\s*#|s\/n|s\.n\.|service\s*tag)[:.\s]*([A-Za-z0-9\-]{4,})/i,
-    /\b(?:sn|ser)[:\s]*([A-Za-z0-9\-]{4,})\b/i
+    /\b(?:sn|ser)[:\s]*([A-Za-z0-9\-]{4,})\b/i,
+    /serial\s*number\s*[:\s]*([A-Za-z0-9\-]{4,})/i
   ];
   for (const p of patterns) {
     const m = text.match(p);

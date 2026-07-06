@@ -126,6 +126,7 @@ export const ocrApi = {
         assetName: 'Demo Laptop',
         serialNumber: 'DEMO12345',
         extractionConfidence: 92,
+        isDemo: true,
       }
     )
   },
