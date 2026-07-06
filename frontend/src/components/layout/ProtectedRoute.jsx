@@ -16,7 +16,7 @@ export function ProtectedRoute() {
 export function AdminRoute() {
   const { isAuthenticated, isAdmin } = useAuthStore()
   if (!isAuthenticated) return <Navigate to="/login" replace />
-  if (!isAdmin()) return <Navigate to="/dashboard" replace />
+  if (!isAdmin()) return <Navigate to="/my-assets" replace />
   return <Outlet />
 }
 
@@ -24,9 +24,9 @@ export function AdminRoute() {
  * Super Admin route guard.
  */
 export function SuperAdminRoute() {
-  const { isAuthenticated, isSuperAdmin } = useAuthStore()
+  const { isAuthenticated, isSuperAdmin, isAdmin } = useAuthStore()
   if (!isAuthenticated) return <Navigate to="/login" replace />
-  if (!isSuperAdmin()) return <Navigate to="/dashboard" replace />
+  if (!isSuperAdmin()) return <Navigate to={isAdmin() ? "/dashboard" : "/my-assets"} replace />
   return <Outlet />
 }
 

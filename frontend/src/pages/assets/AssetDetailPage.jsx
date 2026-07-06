@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { ArrowLeft, Edit, Printer, QrCode, Package, Calendar, Tag, Building2, User, MapPin, DollarSign, Shield, Download, Mail, RefreshCw, ShieldAlert, ShieldCheck } from 'lucide-react'
+import { ArrowLeft, Edit, Printer, QrCode, Package, Calendar, Tag, Building2, User, MapPin, DollarSign, Shield, Download, Mail, RefreshCw, ShieldAlert, ShieldCheck, Wrench, X, AlertTriangle } from 'lucide-react'
 import { assetApi, warrantyApi } from '../../api/index'
 import { formatDate, formatCurrency, getStatusClass, formatStatus } from '../../utils/formatters'
 import useAuthStore from '../../store/authStore'
@@ -33,6 +33,19 @@ export default function AssetDetailPage() {
   const [sendingEmail, setSendingEmail] = useState(false)
   const [downloadingPdf, setDownloadingPdf] = useState(false)
   const [imageError, setImageError] = useState(false)
+  const [showComplaintModal, setShowComplaintModal] = useState(false)
+
+  const complaintMutation = useMutation({
+    mutationFn: (formData) => assetApi.reportIssue(id, formData),
+    onSuccess: () => {
+      toastSuccess('Complaint submitted successfully! Work order created.')
+      queryClient.invalidateQueries(['asset', id])
+      setShowComplaintModal(false)
+    },
+    onError: (err) => {
+      toastError('Failed to submit complaint: ' + getErrorMessage(err))
+    }
+  })
 
   const { data: asset, isLoading, error } = useQuery({
     queryKey: ['asset', id],
@@ -197,6 +210,13 @@ export default function AssetDetailPage() {
           </div>
         </div>
         <div className="flex items-center gap-2">
+          <button 
+            onClick={() => setShowComplaintModal(true)}
+            className="btn-secondary btn-sm text-red-500 hover:text-red-650 flex items-center gap-1.5"
+            style={{ borderColor: 'rgba(239, 68, 68, 0.2)' }}
+          >
+            <Wrench size={14} /> Report Issue
+          </button>
           <button 
             onClick={handleDownloadPdf} 
             disabled={downloadingPdf} 
@@ -410,6 +430,106 @@ export default function AssetDetailPage() {
             </div>
           </div>
         </div>
+      </div>
+      {showComplaintModal && (
+        <ComplaintModal 
+          onClose={() => setShowComplaintModal(false)}
+          onSubmit={(form) => complaintMutation.mutate(form)}
+          isLoading={complaintMutation.isLoading}
+        />
+      )}
+    </div>
+  )
+}
+
+function ComplaintModal({ onClose, onSubmit, isLoading }) {
+  const [form, setForm] = useState({
+    title: '',
+    issueType: 'HARDWARE',
+    priority: 'MEDIUM',
+    description: ''
+  })
+  
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }))
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!form.title.trim()) return;
+    onSubmit(form);
+  }
+  
+  return (
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-box max-w-md text-left">
+        <div className="px-6 py-4 border-b flex items-center justify-between"
+             style={{ borderColor: 'rgb(var(--border-color))' }}>
+          <h2 className="text-sm font-bold flex items-center gap-1.5" style={{ color: 'rgb(var(--text-primary))' }}>
+             <AlertTriangle size={15} className="text-amber-500" />
+             Report Asset Issue / Complaint
+          </h2>
+          <button onClick={onClose} className="btn-icon">
+            <X size={16} style={{ color: 'rgb(var(--text-muted))' }} />
+          </button>
+        </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="form-label">Title / Subject <span className="text-red-500">*</span></label>
+            <input 
+              type="text" 
+              required
+              value={form.title}
+              onChange={e => set('title', e.target.value)}
+              placeholder="e.g. Screen flickering issue, battery charging slowly"
+              className="input text-sm"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="form-label">Issue Type</label>
+              <select 
+                value={form.issueType}
+                onChange={e => set('issueType', e.target.value)}
+                className="input text-sm"
+              >
+                <option value="HARDWARE">Hardware</option>
+                <option value="SOFTWARE">Software</option>
+                <option value="NETWORK">Network</option>
+                <option value="PHYSICAL_DAMAGE">Physical Damage</option>
+                <option value="ROUTINE">Routine Maintenance</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </div>
+            <div>
+              <label className="form-label">Priority Level</label>
+              <select 
+                value={form.priority}
+                onChange={e => set('priority', e.target.value)}
+                className="input text-sm"
+              >
+                <option value="LOW">Low</option>
+                <option value="MEDIUM">Medium</option>
+                <option value="HIGH">High</option>
+                <option value="CRITICAL">Critical</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="form-label">Detailed Description</label>
+            <textarea 
+              value={form.description}
+              onChange={e => set('description', e.target.value)}
+              placeholder="Please provide details about when the issue started and any symptoms..."
+              rows={3}
+              className="input text-sm resize-none"
+            />
+          </div>
+          <div className="flex justify-end gap-3 pt-2">
+            <button type="button" onClick={onClose} className="btn-secondary btn-sm">Cancel</button>
+            <button type="submit" disabled={isLoading} className="btn-danger btn-sm">
+              {isLoading ? 'Submitting...' : 'Submit Complaint'}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )

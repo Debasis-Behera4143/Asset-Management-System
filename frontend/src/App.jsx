@@ -6,6 +6,14 @@ import ErrorBoundary from './components/common/ErrorBoundary'
 import PageLoader from './components/common/PageLoader'
 import NotFoundPage from './components/common/NotFoundPage'
 import { ProtectedRoute, PublicRoute, AdminRoute, SuperAdminRoute, EmployeeRoute } from './components/layout/ProtectedRoute'
+import useAuthStore from './store/authStore'
+
+// ─── Index Route Helper ──────────────────────────────────────────────────────
+function IndexRoute() {
+  const { isAdmin, isAuthenticated } = useAuthStore()
+  if (!isAuthenticated) return <Navigate to="/login" replace />
+  return <Navigate to={isAdmin() ? "/dashboard" : "/my-assets"} replace />
+}
 
 // ─── Lazy-loaded routes (code splitting) ─────────────────────────────────────
 const AppLayout = lazy(() => import('./components/layout/AppLayout'))
@@ -113,23 +121,21 @@ export default function App() {
             {/* Protected app routes */}
             <Route element={<ProtectedRoute />}>
               <Route element={<AppLayout />}>
-                <Route index element={<Navigate to="/dashboard" replace />} />
-                <Route path="/dashboard" element={<DashboardPage />} />
-                <Route path="/assets" element={<AssetsPage />} />
+                <Route index element={<IndexRoute />} />
                 <Route path="/assets/:id" element={<AssetDetailPage />} />
-                <Route element={<EmployeeRoute />}>
-                  <Route path="/my-assets" element={<MyAssetsPage />} />
-                </Route>
+                <Route path="/my-assets" element={<MyAssetsPage />} />
                 <Route path="/ai-assistant" element={<AiAssistantPage />} />
                 <Route path="/qr-scanner" element={<QrScannerPage />} />
-                <Route path="/ocr-scanner" element={<OcrScannerPage />} />
-                <Route path="/maintenance" element={<MaintenancePage />} />
-                <Route path="/return" element={<ReturnAssetsPage />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
 
                 {/* Admin-only routes */}
                 <Route element={<AdminRoute />}>
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/assets" element={<AssetsPage />} />
+                  <Route path="/ocr-scanner" element={<OcrScannerPage />} />
+                  <Route path="/maintenance" element={<MaintenancePage />} />
+                  <Route path="/return" element={<ReturnAssetsPage />} />
                   <Route path="/assets/new" element={<AssetFormPage />} />
                   <Route path="/assets/:id/edit" element={<EditAssetRoute />} />
                   <Route path="/reports" element={<ReportsPage />} />

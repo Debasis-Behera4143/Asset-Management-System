@@ -26,30 +26,30 @@ const navigationGroups = [
   {
     title: 'Operations',
     items: [
-      { to: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard' },
+      { to: '/dashboard',   icon: LayoutDashboard, label: 'Dashboard',     roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] },
       { to: '/qr-scanner',   icon: QrCode,          label: 'QR Code Scanner' },
-      { to: '/ocr-scanner',  icon: Cpu,             label: 'Invoice OCR' },
+      { to: '/ocr-scanner',  icon: Cpu,             label: 'Invoice OCR',          roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] },
       { to: '/ai-assistant', icon: Bot,             label: 'AI Assistant' },
     ]
   },
   {
     title: 'Assets',
     items: [
-      { to: '/assets',      icon: Package,          label: 'Assets Registry' },
-      { to: '/my-assets',   icon: User,             label: 'My Assets',     roles: ['ROLE_EMPLOYEE'] },
+      { to: '/assets',      icon: Package,          label: 'Assets Registry',      roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] },
+      { to: '/my-assets',   icon: User,             label: 'My Assets',            roles: ['ROLE_EMPLOYEE', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] },
     ]
   },
   {
     title: 'Maintenance',
     items: [
-      { to: '/maintenance', icon: Wrench,           label: 'Work Orders' },
+      { to: '/maintenance', icon: Wrench,           label: 'Work Orders',          roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] },
     ]
   },
   {
     title: 'Inventory',
     items: [
       { to: '/allocation',  icon: Landmark,         label: 'Asset Assignment',     roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] },
-      { to: '/return',      icon: RotateCcw,        label: 'Return Assets' },
+      { to: '/return',      icon: RotateCcw,        label: 'Return Assets',        roles: ['ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] },
     ]
   },
   {
