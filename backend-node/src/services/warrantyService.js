@@ -1,6 +1,6 @@
 const { Op } = require('sequelize');
 const { WarrantyTracking, Asset } = require('../models');
-const { ResourceNotFoundError } = require('../middleware/errorHandler');
+const { ResourceNotFoundError, BadRequestError } = require('../middleware/errorHandler');
 const { PagedResponse } = require('../utils/apiResponse');
 const logger = require('../utils/logger');
 
@@ -45,6 +45,21 @@ async function getForAsset(assetId) {
 async function createOrUpdate(assetId, data) {
   const asset = await Asset.findByPk(assetId);
   if (!asset) throw new ResourceNotFoundError('Asset', 'id', assetId);
+
+  const existing = await WarrantyTracking.findOne({ where: { assetId } });
+  const startDate = data.startDate !== undefined ? data.startDate : existing?.startDate;
+  const expiryDate = data.expiryDate !== undefined ? data.expiryDate : existing?.expiryDate;
+
+  if (startDate && expiryDate) {
+    if (new Date(expiryDate) < new Date(startDate)) {
+      throw new BadRequestError('Warranty expiry date cannot be before start date.');
+    }
+  }
+  if (startDate && asset.purchaseDate) {
+    if (new Date(startDate) < new Date(asset.purchaseDate)) {
+      throw new BadRequestError(`Warranty start date cannot be before the asset's purchase date (${asset.purchaseDate}).`);
+    }
+  }
 
   const [warranty] = await WarrantyTracking.findOrCreate({
     where: { assetId },

@@ -200,6 +200,23 @@ export default function AllocationPage() {
   })
 
   const handleAssign = (form) => {
+    if (form.expectedReturn && form.allocatedDate) {
+      const allocated = new Date(form.allocatedDate);
+      const expected = new Date(form.expectedReturn);
+      if (expected < allocated) {
+        error("Expected return date cannot be before the allocation date.");
+        return;
+      }
+    }
+    const selectedAsset = assetsData?.find(a => String(a.id) === String(form.assetId));
+    if (selectedAsset && selectedAsset.purchaseDate) {
+      const purchase = new Date(selectedAsset.purchaseDate);
+      const allocated = new Date(form.allocatedDate);
+      if (allocated < purchase) {
+        error(`Allocation date cannot be before the asset's purchase date (${formatDate(selectedAsset.purchaseDate)}).`);
+        return;
+      }
+    }
     assignMutation.mutate(form)
   }
 

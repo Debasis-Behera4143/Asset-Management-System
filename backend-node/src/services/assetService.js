@@ -21,6 +21,25 @@ const logger = require('../utils/logger');
  * Full CRUD, search, QR generation, depreciation, movement history.
  */
 
+// ─── Date Validation Helper ──────────────────────────────────────────────────
+
+function validateAssetDates(purchaseDate, warrantyExpiry) {
+  if (purchaseDate) {
+    const pDate = new Date(purchaseDate);
+    const today = new Date();
+    today.setHours(23, 59, 59, 999);
+    if (pDate > today) {
+      throw new BadRequestError('Purchase date cannot be in the future.');
+    }
+    if (warrantyExpiry) {
+      const wDate = new Date(warrantyExpiry);
+      if (wDate < pDate) {
+        throw new BadRequestError('Warranty expiry date cannot be before purchase date.');
+      }
+    }
+  }
+}
+
 // ─── Create Asset ───────────────────────────────────────────────────────────
 
 async function createAsset(data, currentUserId) {
@@ -31,6 +50,9 @@ async function createAsset(data, currentUserId) {
 
   const category = await AssetCategory.findByPk(data.categoryId);
   if (!category) throw new ResourceNotFoundError('Category', 'id', data.categoryId);
+
+  // Validate dates
+  validateAssetDates(data.purchaseDate, data.warrantyExpiry);
 
   // Calculate depreciation
   let currentValue = null;
@@ -96,6 +118,19 @@ async function updateAsset(id, data, currentUserId) {
 
   const category = await AssetCategory.findByPk(data.categoryId);
   if (!category) throw new ResourceNotFoundError('Category', 'id', data.categoryId);
+
+  // Validate dates
+  validateAssetDates(data.purchaseDate, data.warrantyExpiry);
+  if (data.purchaseDate) {
+    const pDate = new Date(data.purchaseDate);
+    const allocations = await AssetAllocation.findAll({ where: { assetId: id } });
+    for (const alloc of allocations) {
+      if (alloc.allocatedDate && new Date(alloc.allocatedDate) < pDate) {
+        const allocDateStr = new Date(alloc.allocatedDate).toISOString().split('T')[0];
+        throw new BadRequestError(`Purchase date cannot be after the asset's allocation date (${allocDateStr}).`);
+      }
+    }
+  }
 
   // Recalculate depreciation
   let currentValue = asset.currentValue;

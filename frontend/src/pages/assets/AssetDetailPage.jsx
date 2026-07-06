@@ -405,7 +405,7 @@ export default function AssetDetailPage() {
                 <ActivityLog assetId={id} />
               )}
               {activeTab === 3 && (
-                <WarrantyCoverage assetId={id} />
+                <WarrantyCoverage assetId={id} purchaseDate={asset?.purchaseDate} />
               )}
             </div>
           </div>
@@ -509,7 +509,7 @@ function ActivityLog({ assetId }) {
   )
 }
 
-function WarrantyCoverage({ assetId }) {
+function WarrantyCoverage({ assetId, purchaseDate }) {
   const { isAdmin } = useAuthStore()
   const queryClient = useQueryClient()
   const { success, error } = useToast()
@@ -562,6 +562,18 @@ function WarrantyCoverage({ assetId }) {
 
   const handleSave = (e) => {
     e.preventDefault()
+    if (form.startDate && form.expiryDate) {
+      if (new Date(form.expiryDate) < new Date(form.startDate)) {
+        error("Warranty expiry date cannot be before the start date.");
+        return;
+      }
+    }
+    if (form.startDate && purchaseDate) {
+      if (new Date(form.startDate) < new Date(purchaseDate)) {
+        error(`Warranty start date cannot be before the asset's purchase date (${formatDate(purchaseDate)}).`);
+        return;
+      }
+    }
     updateMutation.mutate(form)
   }
 

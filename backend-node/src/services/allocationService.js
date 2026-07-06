@@ -23,11 +23,27 @@ async function assignAsset(data, currentUserId) {
   if (!employee) throw new ResourceNotFoundError('Employee', 'id', data.employeeId);
   if (!employee.isActive) throw new BusinessError('Cannot assign asset to inactive employee.');
 
+  const allocatedDate = data.allocatedDate ? new Date(data.allocatedDate) : new Date();
+
+  if (asset.purchaseDate) {
+    const pDate = new Date(asset.purchaseDate);
+    if (allocatedDate < pDate) {
+      throw new BadRequestError(`Allocation date (${data.allocatedDate || allocatedDate.toISOString().split('T')[0]}) cannot be before the asset's purchase date (${asset.purchaseDate}).`);
+    }
+  }
+
+  if (data.expectedReturn) {
+    const eReturn = new Date(data.expectedReturn);
+    if (eReturn < allocatedDate) {
+      throw new BadRequestError('Expected return date cannot be before the allocation date.');
+    }
+  }
+
   const allocation = await AssetAllocation.create({
     assetId: asset.id,
     employeeId: employee.id,
     allocatedById: currentUserId,
-    allocatedDate: new Date(),
+    allocatedDate,
     expectedReturn: data.expectedReturn || null,
     status: 'ACTIVE',
     purpose: data.purpose || null,

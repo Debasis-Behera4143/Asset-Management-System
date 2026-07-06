@@ -88,6 +88,26 @@ export default function AssetFormPage({ assetId }) {
     onError: (err) => error(getErrorMessage(err)),
   })
 
+  const onSubmit = (formData) => {
+    if (formData.purchaseDate) {
+      const pDate = new Date(formData.purchaseDate);
+      const today = new Date();
+      today.setHours(23, 59, 59, 999);
+      if (pDate > today) {
+        error("Purchase date cannot be in the future.");
+        return;
+      }
+      if (formData.warrantyExpiry) {
+        const wDate = new Date(formData.warrantyExpiry);
+        if (wDate < pDate) {
+          error("Warranty expiry date cannot be before purchase date.");
+          return;
+        }
+      }
+    }
+    mutation.mutate(formData);
+  };
+
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -159,7 +179,7 @@ export default function AssetFormPage({ assetId }) {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(mutation.mutate)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
           {/* ── Left: Asset Information ────────────────────────────────────── */}
